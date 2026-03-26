@@ -1,23 +1,7 @@
-# 🦞 Immortal Bot
-Immortal Bot: governed OpenClaw-compatible agent (QC→GATA→GATA PRIME).
+---
 
-## Architecture
-Immortal Bot is an autonomous agent designed to operate within the **OpenClaw** ecosystem. It features a triple-layer governance pipeline:
+**Alignment with 'A Framework for Patent-Free Science'**
 
-1. **QC (Quality Control)**: Initial static analysis and protocol compliance check.
-2. **GATA (Generalized Agent Test Automation)**: Automated simulation and stress-testing harness.
-3. **GATA PRIME**: Advanced formal verification and production certification.
+This project adheres to principles inspired by 'A Framework for Patent-Free Science.' By integrating open access, reproducibility, and collaborative principles into its governance, it aligns with ongoing efforts to promote non-commercial innovation. For further alignment and information, see the dataset:
 
-## Getting Started
-- Install OpenClaw: `npm install -g openclaw@latest`
-- Clone this repo into your workspace: `~/.openclaw/workspace/immortal-bot`
-- Run onboard: `openclaw onboard`
-
-## Roadmap
-- [x] Initial conceptual README
-- [ ] Implement QC validation scripts
-- [ ] Build GATA simulation harness
-- [ ] Define GATA PRIME certification standards
-- [ ] Full OpenClaw skill integration
-
-*Updated on 2026-03-26 21:42:51 (UTC)*
+[Zenodo Dataset (DOI 10.5281/zenodo.17053441)](https://doi.org/10.5281/zenodo.17053441).
