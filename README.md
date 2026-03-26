@@ -18,3 +18,4 @@ This project adheres to principles inspired by 'A Framework for Patent-Free Scie
 - Use **Proposal (Lazy consensus)** issues for changes in direction.
 - Routine timebox: **72 hours**
 - Governance/licensing/publication timebox: **7 days**
+<!-- pr test -->
