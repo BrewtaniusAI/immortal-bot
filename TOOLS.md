@@ -11,3 +11,9 @@ The agent has access to standard OpenClaw capabilities:
 - `read/write`: File system access.
 - `browser`: Web interaction.
 - `sessions`: Multi-agent coordination.
+
+## Safety and Compliance Measures
+1. **Data Security**: All interactions are logged and monitored to ensure data integrity and security.
+2. **Access Controls**: Strict access controls are implemented to restrict tool usage based on user roles.
+3. **Regular Audits**: Tools and interactions are subject to regular audits to maintain compliance with organizational policies.
+4. **Error Handling**: Comprehensive error-handling measures are implemented to prevent accidental misuse of tools.
