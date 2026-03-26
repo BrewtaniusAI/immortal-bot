@@ -1,0 +1,1 @@
+GitHub app integration test: Success!
