@@ -14,7 +14,7 @@ labels: proposal, governance
 - [ ] 72 hours (routine)
 - [ ] 7 days (governance / licensing / defensive publication)
 
-**Ends (UTC date/time):** 2026-03-29 22:32 UTC
+**Ends (UTC date/time):** <!-- Replace with actual end date/time in UTC -->
 
 ## How to object
 Comment with:
