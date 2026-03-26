@@ -1,2 +1,14 @@
-cff-version: "1.2",
-message: """Zenodo is a research data repository that allows researchers to securely upload, share, and showcase their research outputs in compliance with Open Science practices. This document provides an overview of how to connect Zenodo with GitHub Releases to enable automated archiving and publication of your project."
+cff-version: 1.2.0
+message: "If you use this project, please cite it as below."
+title: "immortal-bot"
+type: software
+authors:
+  - name: "BrewtaniusAI"
+repository-code: "https://github.com/BrewtaniusAI/immortal-bot"
+url: "https://github.com/BrewtaniusAI/immortal-bot"
+license: "PATENT-FREE SCIENCE IN THE JANUS ERA License (v2.0)"
+keywords:
+  - "open science"
+  - "defensive publication"
+  - "reproducibility"
+  - "governance"
