@@ -50,15 +50,15 @@ QC (Quality Control) → GATA (Testing) → GATA PRIME (Formal Verification)
 # Validate governance payload
 bash qc_validate.sh
 
-# Run governance checks
-python -m immortal_bot.validate
+# View governance documentation
+cat GOVERNANCE.md
 ```
 
 ---
 
 ## Dashboard
 
-Immortal Bot includes an AI-integrated **Liquid Glass** governance dashboard (`dashboard/index.html`) providing:
+Immortal Bot has an AI-integrated **Liquid Glass** governance dashboard providing:
 
 - Full QC → GATA → GATA PRIME pipeline visualization
 - Real-time governance status monitoring (COMPLIANT / DRIFT / VIOLATION)
@@ -69,7 +69,7 @@ Immortal Bot includes an AI-integrated **Liquid Glass** governance dashboard (`d
 - Command palette (`Ctrl+K`) with fuzzy search
 - EU AI Act transparency labels
 
-Open `dashboard/index.html` in any browser to launch.
+> **Note:** The dashboard is available on the [`devin/1775154432-ai-dashboard`](https://github.com/BrewtaniusAI/immortal-bot/tree/devin/1775154432-ai-dashboard) branch. Once merged, open `dashboard/index.html` in any browser.
 
 ---
 
@@ -77,15 +77,16 @@ Open `dashboard/index.html` in any browser to launch.
 
 ```
 immortal-bot/
-├── dashboard/                # Liquid Glass governance dashboard
-│   └── index.html
 ├── .github/workflows/        # CI pipeline
 ├── AGENTS.md                 # Agent directives (QC → GATA → GATA PRIME)
 ├── GOVERNANCE.md             # Governance framework documentation
 ├── ONBOARDING.md             # Contributor onboarding guide
 ├── CONTRIBUTING.md           # Contribution guidelines
 ├── CITATION.cff              # Citation metadata
-├── feature_flags.yml         # Feature lifecycle management
+├── SOUL.md                   # Agent identity and soul specification
+├── TOOLS.md                  # Tool declarations and contracts
+├── LICENSE                   # Patent-free license
+├── governance_payload.json   # QC validation payload
 └── qc_validate.sh            # QC validation script
 ```
 
