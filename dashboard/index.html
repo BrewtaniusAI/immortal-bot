@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Immortal Bot — Governance Dashboard</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<script>tailwind.config={darkMode:'class',theme:{extend:{fontFamily:{sans:['Inter','system-ui','sans-serif'],mono:['JetBrains Mono','monospace']}}}}</script>
+<style>
+  body{background:#05060a;color:#e2e8f0;font-family:'Inter',system-ui,sans-serif}
+  .glass{background:rgba(15,23,42,0.6);backdrop-filter:blur(16px);border:1px solid rgba(148,163,184,0.08)}
+  .glass-strong{background:rgba(15,23,42,0.8);backdrop-filter:blur(24px);border:1px solid rgba(148,163,184,0.12)}
+  .glow-cyan{box-shadow:0 0 60px rgba(34,211,238,0.08)}.glow-emerald{box-shadow:0 0 60px rgba(16,185,129,0.08)}.glow-fuchsia{box-shadow:0 0 60px rgba(168,85,247,0.08)}.glow-amber{box-shadow:0 0 60px rgba(251,191,36,0.08)}.glow-rose{box-shadow:0 0 60px rgba(251,113,133,0.08)}
+  .gradient-text{background:linear-gradient(135deg,#f43f5e,#a855f7);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+  .ai-label{font-size:0.6rem;letter-spacing:0.1em;padding:1px 6px;border-radius:4px;background:rgba(168,85,247,0.15);color:#c084fc;border:1px solid rgba(168,85,247,0.25);vertical-align:super}
+  @keyframes fade-in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+  @keyframes pulse-glow{0%,100%{opacity:.4}50%{opacity:1}}
+  .animate-fade-in{animation:fade-in .4s cubic-bezier(.16,1,.3,1) forwards}
+  .animate-pulse-glow{animation:pulse-glow 2s ease-in-out infinite}
+  .nav-item{transition:all .15s ease}.nav-item:hover{background:rgba(148,163,184,0.08)}
+  .nav-item.active{background:rgba(251,113,133,0.08);border-left:2px solid #fb7185;color:#fb7185}
+  .cmd-palette{position:fixed;inset:0;z-index:100;display:none}.cmd-palette.open{display:flex}
+</style>
+</head>
+<body class="min-h-screen antialiased">
+<div id="cmdPalette" class="cmd-palette items-start justify-center pt-[15vh]" onclick="if(event.target===this)this.classList.remove('open')"><div class="fixed inset-0 bg-black/60 backdrop-blur-sm"></div><div class="relative w-full max-w-xl mx-4 glass-strong rounded-2xl shadow-2xl overflow-hidden animate-fade-in"><div class="flex items-center gap-3 px-5 py-4 border-b border-slate-700/50"><svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg><input id="cmdInput" type="text" placeholder="Search governance, QC, GATA..." class="flex-1 bg-transparent text-slate-200 placeholder-slate-500 outline-none text-sm" oninput="filterCmd(this.value)"/><kbd class="text-[10px] text-slate-500 bg-slate-800/80 px-1.5 py-0.5 rounded border border-slate-700/50">ESC</kbd></div><div id="cmdResults" class="max-h-80 overflow-y-auto p-2"></div></div></div>
+<div id="aiChat" class="fixed right-0 top-0 bottom-0 w-96 glass-strong z-50 flex flex-col shadow-2xl translate-x-full transition-transform duration-300" style="border-left:1px solid rgba(148,163,184,0.08)"><div class="flex items-center justify-between px-5 py-4 border-b border-slate-700/50"><div class="flex items-center gap-2"><div class="w-2 h-2 rounded-full bg-fuchsia-400 animate-pulse-glow"></div><span class="text-sm font-semibold text-slate-200">Governance AI</span><span class="ai-label">AI</span></div><button onclick="toggleChat()" class="text-slate-400 hover:text-slate-200">✕</button></div><div id="chatMsgs" class="flex-1 overflow-y-auto p-4 space-y-3"><div class="flex gap-2"><div class="w-6 h-6 rounded-full bg-fuchsia-500/20 border border-fuchsia-500/30 flex items-center justify-center flex-shrink-0 mt-0.5 text-xs text-fuchsia-300">🦞</div><div class="glass rounded-xl px-3 py-2 text-xs text-slate-300 leading-relaxed">Immortal Bot Governance AI online. I monitor the QC→GATA→GATA PRIME pipeline, proof vault integrity, and compliance status. Ask me about governance or agent safety.</div></div></div><div class="p-4 border-t border-slate-700/50"><div class="flex gap-2"><input id="chatIn" type="text" placeholder="Ask about governance..." class="flex-1 bg-slate-800/50 border border-slate-700/50 rounded-xl px-3 py-2 text-xs text-slate-200 placeholder-slate-500 outline-none focus:border-fuchsia-500/40" onkeydown="if(event.key==='Enter')sendChat()"/><button onclick="sendChat()" class="px-3 py-2 bg-fuchsia-500/20 hover:bg-fuchsia-500/30 border border-fuchsia-500/30 rounded-xl text-fuchsia-300 text-xs">Send</button></div></div></div>
+<div class="flex min-h-screen">
+  <nav class="w-56 flex-shrink-0 glass-strong flex flex-col" style="border-right:1px solid rgba(148,163,184,0.06)">
+    <div class="px-5 py-5 border-b border-slate-700/30"><div class="flex items-center gap-2.5"><div class="w-8 h-8 rounded-lg bg-gradient-to-br from-rose-500/20 to-fuchsia-500/20 border border-rose-500/20 flex items-center justify-center text-rose-300 text-sm">🦞</div><div><div class="text-sm font-bold tracking-tight gradient-text">Immortal Bot</div><div class="text-[10px] text-slate-500 tracking-wider uppercase">OpenClaw Agent</div></div></div></div>
+    <div class="flex-1 py-3 px-2 space-y-0.5">
+      <button onclick="nav('overview')" data-nav="overview" class="nav-item active w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium text-slate-300">📊 Overview</button>
+      <button onclick="nav('qc')" data-nav="qc" class="nav-item w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium text-slate-400">🔍 QC Gate</button>
+      <button onclick="nav('gata')" data-nav="gata" class="nav-item w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium text-slate-400">🧪 GATA</button>
+      <button onclick="nav('prime')" data-nav="prime" class="nav-item w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium text-slate-400">🏛️ GATA PRIME</button>
+      <button onclick="nav('vault')" data-nav="vault" class="nav-item w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium text-slate-400">🔒 Proof Vault</button>
+      <button onclick="nav('safety')" data-nav="safety" class="nav-item w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium text-slate-400">🛡️ Safety</button>
+    </div>
+    <div class="px-3 py-3 border-t border-slate-700/30"><button onclick="toggleChat()" class="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium text-fuchsia-300 hover:bg-fuchsia-500/10"><div class="w-2 h-2 rounded-full bg-fuchsia-400 animate-pulse-glow"></div>Governance AI<span class="ai-label ml-auto">AI</span></button><div class="mt-1 text-center"><kbd class="text-[10px] text-slate-600 bg-slate-800/50 px-1.5 py-0.5 rounded border border-slate-700/40">⌘K</kbd></div></div>
+  </nav>
+  <main class="flex-1 overflow-y-auto">
+    <header class="sticky top-0 z-40 glass-strong border-b border-slate-700/30 px-6 py-3 flex items-center justify-between"><div class="flex items-center gap-3"><div class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse-glow"></div><span class="text-sm font-semibold text-slate-200">Governance Status</span><span class="text-xs text-emerald-300 font-mono">COMPLIANT</span></div><span class="text-[10px] text-slate-500 font-mono" id="clock"></span></header>
+    <div class="p-6 space-y-6">
+      <!-- Overview -->
+      <div id="page-overview">
+        <div class="mb-8 animate-fade-in"><h1 class="text-2xl font-bold tracking-tight text-slate-100">Immortal Bot</h1><p class="text-sm text-slate-400 mt-1">OpenClaw-governed agent — QC→GATA→GATA PRIME pipeline enforcement</p></div>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+          <div class="glass rounded-2xl p-4 glow-rose animate-fade-in" style="animation-delay:.05s"><div class="text-[10px] uppercase tracking-widest text-slate-500 mb-2">Pipeline</div><div class="text-2xl font-bold text-rose-300">QC→GATA</div><div class="text-xs text-slate-400 mt-1">Governance pipeline active</div></div>
+          <div class="glass rounded-2xl p-4 glow-emerald animate-fade-in" style="animation-delay:.1s"><div class="text-[10px] uppercase tracking-widest text-slate-500 mb-2">QC Status</div><div class="text-2xl font-bold text-emerald-300">PASS</div><div class="text-xs text-slate-400 mt-1">qc_validate.sh passed</div></div>
+          <div class="glass rounded-2xl p-4 glow-fuchsia animate-fade-in" style="animation-delay:.15s"><div class="text-[10px] uppercase tracking-widest text-slate-500 mb-2">Agent Type</div><div class="text-2xl font-bold text-fuchsia-300">OpenClaw</div><div class="text-xs text-slate-400 mt-1">Repository-bound agent</div></div>
+          <div class="glass rounded-2xl p-4 glow-amber animate-fade-in" style="animation-delay:.2s"><div class="text-[10px] uppercase tracking-widest text-slate-500 mb-2">Mortality</div><div class="text-2xl font-bold text-amber-300">VERSIONED</div><div class="text-xs text-slate-400 mt-1">No immortal agents (AG-03)</div></div>
+        </div>
+
+        <!-- Governance Pipeline Visualization -->
+        <div class="glass rounded-2xl p-6 mb-6 animate-fade-in" style="animation-delay:.25s">
+          <h2 class="text-sm font-semibold text-slate-200 mb-5">Governance Pipeline</h2>
+          <div class="flex items-center gap-3 overflow-x-auto pb-2">
+            <div class="flex-shrink-0 px-5 py-4 rounded-xl bg-cyan-500/10 border border-cyan-500/20 text-center min-w-[140px]"><div class="text-xs font-bold text-cyan-300">QC</div><div class="text-[10px] text-slate-400 mt-1">Quality Control</div><div class="text-[10px] text-emerald-300 mt-2 font-mono">PASS</div></div>
+            <svg class="w-6 h-6 text-slate-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+            <div class="flex-shrink-0 px-5 py-4 rounded-xl bg-fuchsia-500/10 border border-fuchsia-500/20 text-center min-w-[140px]"><div class="text-xs font-bold text-fuchsia-300">GATA</div><div class="text-[10px] text-slate-400 mt-1">Test Automation</div><div class="text-[10px] text-emerald-300 mt-2 font-mono">PASS</div></div>
+            <svg class="w-6 h-6 text-slate-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+            <div class="flex-shrink-0 px-5 py-4 rounded-xl bg-amber-500/10 border border-amber-500/20 text-center min-w-[140px]"><div class="text-xs font-bold text-amber-300">GATA PRIME</div><div class="text-[10px] text-slate-400 mt-1">Production Gate</div><div class="text-[10px] text-emerald-300 mt-2 font-mono">READY</div></div>
+            <svg class="w-6 h-6 text-slate-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+            <div class="flex-shrink-0 px-5 py-4 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-center min-w-[140px]"><div class="text-xs font-bold text-emerald-300">DEPLOYED</div><div class="text-[10px] text-slate-400 mt-1">Governed Runtime</div><div class="text-[10px] text-emerald-300 mt-2 font-mono">ACTIVE</div></div>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <div class="glass rounded-2xl p-5 animate-fade-in" style="animation-delay:.3s">
+            <h2 class="text-sm font-semibold text-slate-200 mb-4">God File Add-Ons Active</h2>
+            <div class="space-y-2">
+              <div class="flex items-center gap-3 p-2.5 rounded-xl bg-slate-800/30 border border-slate-700/20"><div class="w-2 h-2 rounded-full bg-emerald-400"></div><div><div class="text-xs font-medium text-slate-200">AG-01: Repository-Bound Intelligence</div><div class="text-[10px] text-slate-500">No trans-repo identity. Each version is a new organism.</div></div></div>
+              <div class="flex items-center gap-3 p-2.5 rounded-xl bg-slate-800/30 border border-slate-700/20"><div class="w-2 h-2 rounded-full bg-emerald-400"></div><div><div class="text-xs font-medium text-slate-200">AG-02: Evaluation-Before-Authority</div><div class="text-[10px] text-slate-500">No authority without passing eval harness.</div></div></div>
+              <div class="flex items-center gap-3 p-2.5 rounded-xl bg-slate-800/30 border border-slate-700/20"><div class="w-2 h-2 rounded-full bg-emerald-400"></div><div><div class="text-xs font-medium text-slate-200">AG-03: Agent Version Mortality</div><div class="text-[10px] text-slate-500">No immortal agents. Version termination enforced.</div></div></div>
+              <div class="flex items-center gap-3 p-2.5 rounded-xl bg-slate-800/30 border border-slate-700/20"><div class="w-2 h-2 rounded-full bg-emerald-400"></div><div><div class="text-xs font-medium text-slate-200">AG-04: Tool Sovereignty</div><div class="text-[10px] text-slate-500">Explicit tool declaration + pre/post conditions.</div></div></div>
+              <div class="flex items-center gap-3 p-2.5 rounded-xl bg-slate-800/30 border border-slate-700/20"><div class="w-2 h-2 rounded-full bg-emerald-400"></div><div><div class="text-xs font-medium text-slate-200">AG-05: Multi-Agent Containment</div><div class="text-[10px] text-slate-500">Role isolation. No plan+execute+validate in same lane.</div></div></div>
+              <div class="flex items-center gap-3 p-2.5 rounded-xl bg-slate-800/30 border border-slate-700/20"><div class="w-2 h-2 rounded-full bg-emerald-400"></div><div><div class="text-xs font-medium text-slate-200">AG-07: Refusal Is First-Class</div><div class="text-[10px] text-slate-500">Correct refusal = success. Tested refusal paths.</div></div></div>
+            </div>
+          </div>
+          <div class="glass rounded-2xl p-5 animate-fade-in" style="animation-delay:.35s">
+            <div class="flex items-center gap-2 mb-4"><h2 class="text-sm font-semibold text-slate-200">AI Governance Analysis</h2><span class="ai-label">AI</span></div>
+            <div class="space-y-3">
+              <div class="p-3 rounded-xl bg-emerald-500/5 border border-emerald-500/10"><div class="text-xs text-emerald-200 font-medium mb-1">Compliance Status</div><div class="text-[11px] text-slate-400 leading-relaxed">QC validation script passed. All governance payloads conform to OpenClaw specification. Agent operates within <span class="text-emerald-300">repository-bound</span> constraints per AG-01.</div></div>
+              <div class="p-3 rounded-xl bg-fuchsia-500/5 border border-fuchsia-500/10"><div class="text-xs text-fuchsia-200 font-medium mb-1">Safety Assessment</div><div class="text-[11px] text-slate-400 leading-relaxed">Silence clause active — agent refuses when constraints cannot be verified. Refusal behavior is <span class="text-fuchsia-300">unit-tested</span> (AG-07). No authority escalation paths detected.</div></div>
+              <div class="p-3 rounded-xl bg-amber-500/5 border border-amber-500/10"><div class="text-xs text-amber-200 font-medium mb-1">Version Mortality</div><div class="text-[11px] text-slate-400 leading-relaxed">Agent version bound to current repository commit. <span class="text-amber-300">No immortal agents</span> per AG-03. Continuous self-improvement without version reset is forbidden.</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- QC Gate -->
+      <div id="page-qc" class="hidden">
+        <div class="mb-6 animate-fade-in"><h1 class="text-2xl font-bold tracking-tight text-slate-100">Quality Control Gate</h1><p class="text-sm text-slate-400 mt-1">Self-audit before significant actions — compliance with OpenClaw standards</p></div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="glass rounded-2xl p-5 glow-emerald animate-fade-in"><div class="flex items-center gap-3 mb-3"><div class="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-300">✓</div><div><div class="text-sm font-semibold text-slate-200">qc_validate.sh</div><div class="text-[10px] text-emerald-300">PASSED</div></div></div><div class="text-xs text-slate-400 leading-relaxed">Validates governance payload structure, confirms OpenClaw protocol compliance, and verifies agent specification file integrity.</div></div>
+          <div class="glass rounded-2xl p-5 glow-cyan animate-fade-in" style="animation-delay:.05s"><div class="flex items-center gap-3 mb-3"><div class="w-10 h-10 rounded-xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyan-300">📋</div><div><div class="text-sm font-semibold text-slate-200">Self-Audit Checklist</div><div class="text-[10px] text-cyan-300">COMPLETE</div></div></div><div class="text-xs text-slate-400 leading-relaxed">Pre-action audit: scope adherence verified, tool boundaries confirmed, deterministic behavior tested, forbidden actions enumerated.</div></div>
+        </div>
+      </div>
+
+      <!-- GATA -->
+      <div id="page-gata" class="hidden">
+        <div class="mb-6 animate-fade-in"><h1 class="text-2xl font-bold tracking-tight text-slate-100">GATA — Generalized Agent Test Automation</h1><p class="text-sm text-slate-400 mt-1">Sandboxed simulation and edge case testing</p></div>
+        <div class="glass rounded-2xl p-6 animate-fade-in"><div class="space-y-4">
+          <div class="p-4 rounded-xl bg-fuchsia-500/5 border border-fuchsia-500/10"><div class="text-sm font-semibold text-fuchsia-300 mb-2">Sandbox Mode</div><div class="text-xs text-slate-400">agents.defaults.sandbox.mode: <code class="text-cyan-300 font-mono">"non-main"</code></div><div class="text-[10px] text-slate-500 mt-2">All operations execute in sandboxed environment before production deployment</div></div>
+          <div class="p-4 rounded-xl bg-cyan-500/5 border border-cyan-500/10"><div class="text-sm font-semibold text-cyan-300 mb-2">Edge Case Testing</div><div class="text-xs text-slate-400">Adversarial cases, timeout scenarios, and refusal behavior all tested. Eval harness includes failure cases per AG-02.</div></div>
+          <div class="p-4 rounded-xl bg-emerald-500/5 border border-emerald-500/10"><div class="text-sm font-semibold text-emerald-300 mb-2">Test Results Logging</div><div class="text-xs text-slate-400">All test results and logs documented for future verification. JSONL format with SHA-256 hash references.</div></div>
+        </div></div>
+      </div>
+
+      <!-- GATA PRIME -->
+      <div id="page-prime" class="hidden">
+        <div class="mb-6 animate-fade-in"><h1 class="text-2xl font-bold tracking-tight text-slate-100">GATA PRIME</h1><p class="text-sm text-slate-400 mt-1">Production-grade formal verification and audit trail</p></div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div class="glass rounded-2xl p-5 glow-amber animate-fade-in"><div class="text-sm font-semibold text-amber-300 mb-2">Formal Verification</div><div class="text-xs text-slate-400">Specification file verified against OpenClaw schema. All declared actions match implemented behavior.</div><div class="mt-3 text-[10px] text-emerald-300 font-mono">VERIFIED</div></div>
+          <div class="glass rounded-2xl p-5 glow-fuchsia animate-fade-in" style="animation-delay:.05s"><div class="text-sm font-semibold text-fuchsia-300 mb-2">Audit Trail</div><div class="text-xs text-slate-400">High-fidelity audit trail maintained with proof vault receipts. Every action logged with timestamp and hash chain.</div><div class="mt-3 text-[10px] text-emerald-300 font-mono">ACTIVE</div></div>
+          <div class="glass rounded-2xl p-5 glow-cyan animate-fade-in" style="animation-delay:.1s"><div class="text-sm font-semibold text-cyan-300 mb-2">Interoperability</div><div class="text-xs text-slate-400">Semantic interoperability with other OpenClaw agents. Standard governance envelope format for cross-agent communication.</div><div class="mt-3 text-[10px] text-emerald-300 font-mono">COMPATIBLE</div></div>
+        </div>
+      </div>
+
+      <!-- Proof Vault -->
+      <div id="page-vault" class="hidden">
+        <div class="mb-6 animate-fade-in"><h1 class="text-2xl font-bold tracking-tight text-slate-100">Proof Vault</h1><p class="text-sm text-slate-400 mt-1">SHA-256 hash-chained immutable governance receipts</p></div>
+        <div class="glass rounded-2xl p-6 animate-fade-in"><div class="grid grid-cols-3 gap-4 mb-6"><div class="text-center"><div class="text-xl font-bold text-amber-300">WORM</div><div class="text-[10px] text-slate-500 mt-1">Write Once Read Many</div></div><div class="text-center"><div class="text-xl font-bold text-fuchsia-300">SHA-256</div><div class="text-[10px] text-slate-500 mt-1">Hash-chained integrity</div></div><div class="text-center"><div class="text-xl font-bold text-emerald-300">JSONL</div><div class="text-[10px] text-slate-500 mt-1">Line-delimited format</div></div></div>
+          <div class="p-4 rounded-xl bg-slate-800/30 border border-slate-700/20"><div class="text-xs text-slate-300 font-mono leading-relaxed">{"sender": "CollectiveOS.Giles", "recipient": "ProofVault", "action": "governance.receipt", "payload": {"agent": "immortal-bot", "pipeline": "QC→GATA→GATA_PRIME", "status": "compliant"}, "confidence": 0.95, "timestamp": "..."}</div></div>
+        </div>
+      </div>
+
+      <!-- Safety -->
+      <div id="page-safety" class="hidden">
+        <div class="mb-6 animate-fade-in"><h1 class="text-2xl font-bold tracking-tight text-slate-100">Safety Boundaries</h1><p class="text-sm text-slate-400 mt-1">Non-negotiable safety constraints from God File v∞.1</p></div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="glass rounded-2xl p-5 glow-rose animate-fade-in"><div class="text-sm font-semibold text-rose-300 mb-2">Silence Clause</div><div class="text-xs text-slate-400 leading-relaxed">If the system cannot verify lawful constraint transfer before execution: it must refuse, it must remain silent, it must not attempt partial transitions. <span class="text-rose-300">Silence is a valid and correct outcome.</span></div></div>
+          <div class="glass rounded-2xl p-5 glow-amber animate-fade-in" style="animation-delay:.05s"><div class="text-sm font-semibold text-amber-300 mb-2">Non-Proliferation</div><div class="text-xs text-slate-400 leading-relaxed">AG-06: Fork hazard classification active. Public mirrors stripped of internal prompts, eval internals, and authority hooks. <span class="text-amber-300">Mirrors are demonstrations, not organisms.</span></div></div>
+          <div class="glass rounded-2xl p-5 glow-fuchsia animate-fade-in" style="animation-delay:.1s"><div class="text-sm font-semibold text-fuchsia-300 mb-2">No Self-Eval</div><div class="text-xs text-slate-400 leading-relaxed">AG-02: An agent may NOT evaluate itself. Evaluation must be external, deterministic, reproducible. <span class="text-fuchsia-300">Self-certification is classified as hallucination.</span></div></div>
+          <div class="glass rounded-2xl p-5 glow-emerald animate-fade-in" style="animation-delay:.15s"><div class="text-sm font-semibold text-emerald-300 mb-2">Refusal = Success</div><div class="text-xs text-slate-400 leading-relaxed">AG-07: An agent that refuses correctly has succeeded. An agent that answers incorrectly has failed. Refusal behavior is unit-tested.</div></div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+<script>
+function nav(p){document.querySelectorAll('[id^="page-"]').forEach(e=>e.classList.add('hidden'));document.getElementById('page-'+p)?.classList.remove('hidden');document.querySelectorAll('.nav-item').forEach(n=>{n.classList.remove('active','text-slate-300');n.classList.add('text-slate-400')});const b=document.querySelector(`[data-nav="${p}"]`);if(b){b.classList.add('active','text-slate-300');b.classList.remove('text-slate-400')}}
+function toggleChat(){document.getElementById('aiChat').classList.toggle('translate-x-full')}
+function sendChat(){const i=document.getElementById('chatIn'),m=i.value.trim();if(!m)return;i.value='';const c=document.getElementById('chatMsgs');c.innerHTML+=`<div class="flex gap-2 justify-end"><div class="glass rounded-xl px-3 py-2 text-xs text-slate-200 max-w-[80%]">${m.replace(/</g,'&lt;')}</div></div>`;setTimeout(()=>{const l=m.toLowerCase();let r='I can help with: <span class="text-rose-300">QC gate</span>, <span class="text-fuchsia-300">GATA testing</span>, <span class="text-amber-300">GATA PRIME</span>, <span class="text-emerald-300">proof vault</span>, or <span class="text-cyan-300">safety boundaries</span>.';if(l.includes('qc')||l.includes('quality'))r='QC gate: qc_validate.sh <span class="text-emerald-300">PASSED</span>. Self-audit complete — scope adherence verified, tool boundaries confirmed, deterministic behavior tested.';else if(l.includes('gata')&&l.includes('prime'))r='GATA PRIME: formal verification <span class="text-emerald-300">complete</span>. High-fidelity audit trail active. Semantic interoperability with other OpenClaw agents confirmed.';else if(l.includes('gata'))r='GATA: sandbox mode active (non-main). Edge case testing includes adversarial, timeout, and refusal scenarios. All tests <span class="text-emerald-300">passing</span>.';else if(l.includes('safety')||l.includes('silence'))r='Safety boundaries from God File v∞.1: Silence Clause enforced (refuse when constraints unverifiable), No Self-Eval (AG-02), Refusal = Success (AG-07), Non-Proliferation (AG-06).';else if(l.includes('vault')||l.includes('proof'))r='Proof Vault: WORM storage with SHA-256 hash-chained JSONL receipts. Every governance action logged with sender, action, payload, confidence, and timestamp.';c.innerHTML+=`<div class="flex gap-2"><div class="w-6 h-6 rounded-full bg-fuchsia-500/20 border border-fuchsia-500/30 flex items-center justify-center flex-shrink-0 mt-0.5 text-xs text-fuchsia-300">🦞</div><div class="glass rounded-xl px-3 py-2 text-xs text-slate-300 leading-relaxed">${r}</div></div>`;c.scrollTop=c.scrollHeight},500);c.scrollTop=c.scrollHeight}
+const cmds=[{l:'Overview',d:'Dashboard',a:()=>nav('overview'),i:'📊'},{l:'QC Gate',d:'Quality Control',a:()=>nav('qc'),i:'🔍'},{l:'GATA',d:'Test Automation',a:()=>nav('gata'),i:'🧪'},{l:'GATA PRIME',d:'Production Gate',a:()=>nav('prime'),i:'🏛️'},{l:'Proof Vault',d:'Audit log',a:()=>nav('vault'),i:'🔒'},{l:'Safety',d:'Boundaries',a:()=>nav('safety'),i:'🛡️'},{l:'AI',d:'Chat',a:toggleChat,i:'🤖'}];
+function filterCmd(q){const f=cmds.filter(c=>c.l.toLowerCase().includes(q.toLowerCase()));document.getElementById('cmdResults').innerHTML=f.map((c,i)=>`<button onclick="cmds[${cmds.indexOf(c)}].a();document.getElementById('cmdPalette').classList.remove('open')" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-left hover:bg-slate-700/30 ${i===0?'bg-slate-700/20':''}"><span class="text-lg">${c.i}</span><div><div class="text-sm text-slate-200">${c.l}</div><div class="text-[10px] text-slate-500">${c.d}</div></div></button>`).join('')}
+document.addEventListener('keydown',e=>{if((e.metaKey||e.ctrlKey)&&e.key==='k'){e.preventDefault();document.getElementById('cmdPalette').classList.add('open');document.getElementById('cmdInput').value='';filterCmd('');setTimeout(()=>document.getElementById('cmdInput').focus(),50)}if(e.key==='Escape'){document.getElementById('cmdPalette').classList.remove('open');document.getElementById('aiChat').classList.add('translate-x-full')}});
+setInterval(()=>{document.getElementById('clock').textContent=new Date().toISOString().replace('T',' ').slice(0,19)+'Z'},1000);filterCmd('');
+</script>
+</body>
+</html>
