@@ -1,0 +1,131 @@
+name: Defensive Publication (Zenodo)
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: read
+
+jobs:
+  zenodo-publish:
+    name: Publish to Zenodo
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: sudo apt-get update && sudo apt-get install -y jq curl
+
+      - name: Validate .zenodo.json
+        run: |
+          if [[ ! -f ".zenodo.json" ]]; then
+            echo "ERROR: .zenodo.json not found. Cannot publish to Zenodo."
+            exit 1
+          fi
+          if jq empty .zenodo.json 2>/dev/null; then
+            echo "PASS: .zenodo.json is valid JSON."
+          else
+            echo "FAIL: .zenodo.json is not valid JSON."
+            exit 1
+          fi
+
+      - name: Create Zenodo deposition
+        id: create_deposition
+        env:
+          ZENODO_TOKEN: ${{ secrets.ZENODO_TOKEN }}
+          ZENODO_BASE_URL: https://zenodo.org/api
+        run: |
+          METADATA=$(jq -n \
+            --argjson meta "$(cat .zenodo.json)" \
+            --arg version "${{ github.event.release.tag_name }}" \
+            --arg date "$(date -u +%Y-%m-%d)" \
+            '{metadata: ($meta + {version: $version, publication_date: $date})}')
+
+          RESPONSE=$(curl -s -X POST \
+            -H "Content-Type: application/json" \
+            -H "Authorization: Bearer ${ZENODO_TOKEN}" \
+            "${ZENODO_BASE_URL}/deposit/depositions" \
+            -d "$METADATA")
+
+          echo "Deposition response: $RESPONSE"
+
+          DEPOSITION_ID=$(echo "$RESPONSE" | jq -r '.id // empty')
+          BUCKET_URL=$(echo "$RESPONSE" | jq -r '.links.bucket // empty')
+
+          if [[ -z "$DEPOSITION_ID" ]]; then
+            echo "ERROR: Failed to create Zenodo deposition."
+            echo "$RESPONSE"
+            exit 1
+          fi
+
+          echo "deposition_id=${DEPOSITION_ID}" >> "$GITHUB_OUTPUT"
+          echo "bucket_url=${BUCKET_URL}" >> "$GITHUB_OUTPUT"
+          echo "Deposition created: ID=${DEPOSITION_ID}"
+
+      - name: Package release archive
+        run: |
+          git archive --format=zip --output=release-archive.zip HEAD
+          echo "Archive created: release-archive.zip"
+
+      - name: Upload archive to Zenodo
+        env:
+          ZENODO_TOKEN: ${{ secrets.ZENODO_TOKEN }}
+        run: |
+          BUCKET_URL="${{ steps.create_deposition.outputs.bucket_url }}"
+          FILENAME="immortal-bot-${{ github.event.release.tag_name }}.zip"
+
+          UPLOAD_RESPONSE=$(curl -s -X PUT \
+            -H "Authorization: Bearer ${ZENODO_TOKEN}" \
+            --upload-file release-archive.zip \
+            "${BUCKET_URL}/${FILENAME}")
+
+          echo "Upload response: $UPLOAD_RESPONSE"
+          UPLOAD_ID=$(echo "$UPLOAD_RESPONSE" | jq -r '.id // empty')
+          if [[ -z "$UPLOAD_ID" ]]; then
+            echo "ERROR: File upload to Zenodo failed."
+            echo "$UPLOAD_RESPONSE"
+            exit 1
+          fi
+          echo "File uploaded successfully: ${FILENAME}"
+
+      - name: Publish deposition to Zenodo
+        id: publish
+        env:
+          ZENODO_TOKEN: ${{ secrets.ZENODO_TOKEN }}
+          ZENODO_BASE_URL: https://zenodo.org/api
+        run: |
+          DEPOSITION_ID="${{ steps.create_deposition.outputs.deposition_id }}"
+
+          PUBLISH_RESPONSE=$(curl -s -X POST \
+            -H "Authorization: Bearer ${ZENODO_TOKEN}" \
+            "${ZENODO_BASE_URL}/deposit/depositions/${DEPOSITION_ID}/actions/publish")
+
+          echo "Publish response: $PUBLISH_RESPONSE"
+
+          DOI=$(echo "$PUBLISH_RESPONSE" | jq -r '.doi // empty')
+          DOI_URL=$(echo "$PUBLISH_RESPONSE" | jq -r '.doi_url // empty')
+
+          if [[ -z "$DOI" ]]; then
+            echo "ERROR: Zenodo publication failed — no DOI returned."
+            echo "$PUBLISH_RESPONSE"
+            exit 1
+          fi
+
+          echo "doi=${DOI}" >> "$GITHUB_OUTPUT"
+          echo "doi_url=${DOI_URL}" >> "$GITHUB_OUTPUT"
+          echo "SUCCESS: Published with DOI=${DOI}"
+
+      - name: Summary
+        run: |
+          echo "## Defensive Publication Complete" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Field | Value |" >> "$GITHUB_STEP_SUMMARY"
+          echo "|-------|-------|" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Release | ${{ github.event.release.tag_name }} |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| DOI | ${{ steps.publish.outputs.doi }} |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| DOI URL | ${{ steps.publish.outputs.doi_url }} |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Timestamp | $(date -u) |" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "This artifact is timestamped and citable per 'A Framework for Patent-Free Science.'" >> "$GITHUB_STEP_SUMMARY"
