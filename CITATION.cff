@@ -12,3 +12,15 @@ keywords:
   - "defensive publication"
   - "reproducibility"
   - "governance"
+  - "patent-free"
+  - "AI agent"
+  - "OpenClaw"
+abstract: >
+  Immortal Bot is a governed OpenClaw-compatible agent built around a
+  QC → GATA → GATA PRIME governance pipeline, aligned with
+  'A Framework for Patent-Free Science.' Each release is defensively
+  published to Zenodo to establish timestamped public prior art.
+related-resources:
+  - type: url
+    value: "https://doi.org/10.5281/zenodo.17053441"
+    description: "Related dataset: A Framework for Patent-Free Science"

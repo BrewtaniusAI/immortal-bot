@@ -1,0 +1,35 @@
+{
+  "title": "Immortal Bot",
+  "description": "A governed OpenClaw-compatible agent built around a QC → GATA → GATA PRIME governance pipeline, aligned with 'A Framework for Patent-Free Science.'",
+  "upload_type": "software",
+  "license": "other-open",
+  "access_right": "open",
+  "creators": [
+    {
+      "name": "BrewtaniusAI",
+      "affiliation": "BrewtaniusAI"
+    }
+  ],
+  "keywords": [
+    "open science",
+    "defensive publication",
+    "reproducibility",
+    "governance",
+    "patent-free",
+    "AI agent",
+    "OpenClaw"
+  ],
+  "related_identifiers": [
+    {
+      "identifier": "10.5281/zenodo.17053441",
+      "relation": "cites",
+      "scheme": "doi"
+    },
+    {
+      "identifier": "https://github.com/BrewtaniusAI/immortal-bot",
+      "relation": "isSourceOf",
+      "scheme": "url"
+    }
+  ],
+  "notes": "This release is a defensive publication artifact. It establishes public prior art and is timestamped and citable per 'A Framework for Patent-Free Science.' No patent claims may be asserted against this work per the PATENT-FREE SCIENCE IN THE JANUS ERA License (v2.0)."
+}

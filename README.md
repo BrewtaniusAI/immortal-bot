@@ -13,6 +13,7 @@ This project adheres to principles inspired by 'A Framework for Patent-Free Scie
 - Governance: `GOVERNANCE.md`
 - Contributing: `CONTRIBUTING.md`
 - Citation metadata: `CITATION.cff`
+- Defensive publication: `DEFENSIVE_PUBLICATION.md`
 
 ## Governance workflow (issues-only)
 - Use **Proposal (Lazy consensus)** issues for changes in direction.
