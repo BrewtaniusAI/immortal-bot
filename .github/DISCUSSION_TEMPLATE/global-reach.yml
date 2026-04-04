@@ -1,0 +1,41 @@
+labels: [global-reach]
+title: "[Global Reach] "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this template to surface barriers to participation, propose translations,
+        or coordinate international outreach.
+        See [FORUM.md — Global Reach](https://github.com/BrewtaniusAI/immortal-bot/blob/main/FORUM.md#global-reach) for context.
+  - type: dropdown
+    id: topic_type
+    attributes:
+      label: Topic type
+      options:
+        - "Barrier to participation"
+        - "Translation / localisation"
+        - "International outreach"
+        - "Time-zone / async coordination"
+        - "Accessibility"
+        - "Other"
+    validations:
+      required: true
+  - type: input
+    id: region
+    attributes:
+      label: Region / language (if applicable)
+      placeholder: "e.g. Brazil / Portuguese, West Africa / French, ..."
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: Describe the barrier, opportunity, or proposal.
+      placeholder: Be as specific as possible so the community can act on it.
+    validations:
+      required: true
+  - type: textarea
+    id: proposed_action
+    attributes:
+      label: Proposed action (optional)
+      description: Do you have a concrete suggestion for how to address this?
+      placeholder: Optional — leave blank if you are raising the issue without a solution in mind.

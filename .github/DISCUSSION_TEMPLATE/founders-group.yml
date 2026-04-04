@@ -1,0 +1,41 @@
+labels: [founders-group]
+title: "[Founders Group] "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Welcome to the **Founding Cohort** space! Use this template to introduce yourself,
+        coordinate with fellow founders, or share retrospectives.
+        See [FORUM.md — Founding Cohort](https://github.com/BrewtaniusAI/immortal-bot/blob/main/FORUM.md#founding-cohort) for what it means to be a Founding Cohort member.
+  - type: dropdown
+    id: thread_type
+    attributes:
+      label: Thread type
+      options:
+        - "Introduction — I'm new here"
+        - "Coordination — planning or logistics"
+        - "Retrospective — lessons learned"
+        - "Other"
+    validations:
+      required: true
+  - type: textarea
+    id: content
+    attributes:
+      label: Message
+      description: Share your introduction, update, or discussion topic.
+      placeholder: |
+        If this is an introduction, consider sharing:
+        - Where you're based (country/region)
+        - Your background or areas of expertise
+        - What drew you to patent-free science / Immortal Bot
+        - How you'd like to contribute
+    validations:
+      required: true
+  - type: checkboxes
+    id: pledge
+    attributes:
+      label: OSNA-style non-assert pledge
+      options:
+        - label: >
+            I agree to the OSNA-style non-assert pledge for my contributions to this repository
+            (as described in [ONBOARDING.md](https://github.com/BrewtaniusAI/immortal-bot/blob/main/ONBOARDING.md#contribution-gate-osna-style-non-assert-pledge-required)).
