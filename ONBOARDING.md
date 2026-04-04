@@ -27,16 +27,41 @@ cd immortal-bot
 openclaw onboard
 ```
 
+## Usage
+
+Once onboarded, you can interact with Immortal Bot through OpenClaw commands:
+
+### Run a governed task
+```bash
+openclaw run --agent immortal-bot --task "<describe your task here>"
+```
+
+The bot automatically invokes the QC→GATA→GATA PRIME pipeline before executing any significant action.
+
+### Check agent status
+```bash
+openclaw status immortal-bot
+```
+
+### View audit trail
+```bash
+openclaw logs immortal-bot --tail 50
+```
+
+> **Note:** The bot operates in sandbox mode (`non-main`) by default. Promote to production only after GATA PRIME formal verification.
+
 ## Repository governance pipeline (high level)
 
+The **QC→GATA→GATA PRIME** pipeline is mandatory for all autonomous agent actions:
+
 1. **QC (Quality Control)**  
-   Static validation checks, repository policy checks, and “minimum bar” reproducibility checks.
+   Self-audit and static validation before any action. The bot checks planned code or commands against OpenClaw safety standards. Run locally with `bash ./qc_validate.sh`.
 
 2. **GATA (Generalized Agent Test Automation)**  
-   Automated simulation/stress tests (to be implemented).
+   Automated simulation and stress tests in a sandboxed (`non-main`) environment. Tests for edge cases and unexpected failures; results are documented for future verification.
 
 3. **GATA PRIME**  
-   Advanced formal verification / certification standards (to be defined).
+   Advanced formal verification and certification standards for production-grade deployments. Requires a high-fidelity audit trail and semantic interoperability with other OpenClaw agents.
 
 ## QC: run validation locally
 
@@ -111,6 +136,43 @@ Include:
 - No secret tokens required
 - Minimal steps, explicit versions
 - Clear README snippet explaining expected output
+
+## Citing patent-free science principles
+
+This project aligns with **‘A Framework for Patent-Free Science’**. If you reference this work in academic papers, reports, or derivative projects, please cite:
+
+> *Immortal Bot* — BrewtaniusAI, [GitHub](https://github.com/BrewtaniusAI/immortal-bot)  
+> Zenodo Dataset: [DOI 10.5281/zenodo.17053441](https://doi.org/10.5281/zenodo.17053441)
+
+Or use the provided `CITATION.cff` file (parsed automatically by GitHub and Zenodo):
+
+```bash
+cat CITATION.cff
+```
+
+**Core principles you are citing:**
+- **Open access**: All artefacts are publicly available with no access fees.
+- **Reproducibility**: Contributions must include a Repro Pack (see above).
+- **Non-commercial**: Downstream use must remain non-commercial per the project license.
+- **Non-assert**: Contributors and users do not assert patents against this project or its users.
+
+## Community guidelines
+
+We are committed to an inclusive, respectful, and productive community. Please read and follow these guidelines:
+
+1. **Be respectful.** Treat everyone with courtesy and professionalism. Harassment, discrimination, or personal attacks of any kind are not tolerated.
+
+2. **Stay on topic.** Discussions, issues, and PRs should remain relevant to the project and its scientific/governance goals.
+
+3. **Assume good faith.** When interpreting ambiguous messages, assume the best intent from fellow contributors.
+
+4. **Honour lazy consensus.** Routine changes are open for 72 hours; governance or licensing changes are open for 7 days. Silence implies consent — speak up if you object.
+
+5. **Keep it non-commercial.** Contributions must remain within the non-commercial terms of the license. Do not propose features that would benefit a proprietary or commercial product.
+
+6. **Credit openly.** Acknowledge prior art and collaborators. Do not claim sole authorship of collectively produced work.
+
+7. **Report concerns.** If you witness a violation of these guidelines, open an issue labelled `conduct` or contact a maintainer directly.
 
 ## Need help?
 Open an issue and include:
