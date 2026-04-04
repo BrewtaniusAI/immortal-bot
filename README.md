@@ -13,6 +13,18 @@ This project adheres to principles inspired by 'A Framework for Patent-Free Scie
 - Governance: `GOVERNANCE.md`
 - Contributing: `CONTRIBUTING.md`
 - Citation metadata: `CITATION.cff`
+- **Repro Pack** (reproducible example): `repro-pack/README.md`
+
+## Repro Pack — quick start
+
+```bash
+# Docker (no local dependencies except Docker)
+docker build -t immortal-bot-repro -f repro-pack/Dockerfile .
+docker run --rm immortal-bot-repro
+
+# Bare Bash (requires bash ≥ 4.x and jq)
+bash repro-pack/run_repro.sh
+```
 
 ## Governance workflow (issues-only)
 - Use **Proposal (Lazy consensus)** issues for changes in direction.
