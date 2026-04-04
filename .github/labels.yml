@@ -1,0 +1,18 @@
+# Default label definitions for immortal-bot
+# Consumed by the label-sync workflow (.github/workflows/labels.yml)
+
+- name: bug
+  color: "d73a4a"
+  description: "Defect report"
+
+- name: governance
+  color: "0075ca"
+  description: "Process / policy / meta"
+
+- name: proposal
+  color: "e4e669"
+  description: "Timeboxed lazy-consensus proposal"
+
+- name: repro-pack
+  color: "0e8a16"
+  description: "Reproducible example submission"
