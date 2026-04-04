@@ -1,4 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <title>Immortal Bot Icon</title>
   <defs>
     <radialGradient id="bg-immortal-bot" cx="50%" cy="50%" r="70%">
       <stop offset="0%" stop-color="#1a0a0a" stop-opacity="1"/>
@@ -7,8 +8,8 @@
   </defs>
   <rect width="64" height="64" rx="12" fill="#1a0a0a"/>
   <rect width="64" height="64" rx="12" fill="url(#bg-immortal-bot)" opacity="0.8"/>
-<!-- Shield with Infinity -->
-    <path d="M32,6 L48,16 L48,36 C48,46 40,54 32,58 C24,54 16,46 16,36 L16,16 Z" fill="#ef4444" opacity="0.2" stroke="#ef4444" stroke-width="2"/>
-    <path d="M22,32 C22,26 28,26 32,32 C36,26 42,26 42,32 C42,38 36,38 32,32 C28,38 22,38 22,32Z" fill="none" stroke="#fca5a5" stroke-width="2.5"/>
-    <circle cx="32" cy="20" r="3" fill="#ef4444"/>
+  <!-- Shield with Infinity -->
+  <path d="M32,6 L48,16 L48,36 C48,46 40,54 32,58 C24,54 16,46 16,36 L16,16 Z" fill="#ef4444" opacity="0.2" stroke="#ef4444" stroke-width="2"/>
+  <path d="M22,32 C22,26 28,26 32,32 C36,26 42,26 42,32 C42,38 36,38 32,32 C28,38 22,38 22,32Z" fill="none" stroke="#fca5a5" stroke-width="2.5"/>
+  <circle cx="32" cy="20" r="3" fill="#ef4444"/>
 </svg>
