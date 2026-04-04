@@ -1,4 +1,4 @@
----
+# Immortal Bot
 
 **Alignment with 'A Framework for Patent-Free Science'**
 
