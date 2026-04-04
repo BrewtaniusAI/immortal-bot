@@ -1,3 +1,11 @@
+# 🦞 Immortal Bot
+
+**A governed, OpenClaw-compatible AI agent built around the QC→GATA→GATA PRIME pipeline.**
+
+Immortal Bot is designed for resilience, precision, and protocol-first governance. It operates within the OpenClaw network as a transparent, reproducible, and patent-free scientific tool.
+
+> **New here?** Start with [ONBOARDING.md](ONBOARDING.md) for setup, usage, and contribution instructions.
+
 ---
 
 **Alignment with 'A Framework for Patent-Free Science'**
