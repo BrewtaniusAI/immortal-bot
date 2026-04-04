@@ -1,0 +1,7 @@
+{
+  "run_id": "repro-001",
+  "status": "approved",
+  "decision": "allow",
+  "drift_final": 0.0,
+  "cdi_final": 0.0
+}
