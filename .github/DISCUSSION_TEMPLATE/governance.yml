@@ -1,0 +1,52 @@
+labels: [governance]
+title: "[Governance] "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this template for lazy-consensus governance proposals that do not yet have a formal Issue.
+        See [GOVERNANCE.md](https://github.com/BrewtaniusAI/immortal-bot/blob/main/GOVERNANCE.md) and [FORUM.md](https://github.com/BrewtaniusAI/immortal-bot/blob/main/FORUM.md) for timebox rules.
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposal
+      description: What change are you proposing?
+      placeholder: Clearly describe the proposed change or decision.
+    validations:
+      required: true
+  - type: textarea
+    id: rationale
+    attributes:
+      label: Rationale
+      description: Why is this beneficial to the project?
+      placeholder: Explain the reasoning and any trade-offs.
+    validations:
+      required: true
+  - type: dropdown
+    id: timebox
+    attributes:
+      label: Timebox
+      description: Select the appropriate consensus timebox.
+      options:
+        - "72 hours (routine)"
+        - "7 days (governance / licensing / defensive publication)"
+    validations:
+      required: true
+  - type: input
+    id: timebox_end
+    attributes:
+      label: "Timebox ends (UTC)"
+      description: "When does the timebox expire? (e.g. 2026-04-07 17:00 UTC)"
+      placeholder: "YYYY-MM-DD HH:MM UTC"
+    validations:
+      required: true
+  - type: textarea
+    id: objections
+    attributes:
+      label: How to object
+      description: Leave this as the default unless you have specific instructions.
+      value: |
+        Comment with:
+        1. The specific concern (what breaks / what risk).
+        2. A concrete alternative or mitigation.
+        3. Whether the objection is blocking or non-blocking.

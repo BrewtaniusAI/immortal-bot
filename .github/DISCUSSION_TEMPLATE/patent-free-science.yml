@@ -1,0 +1,42 @@
+labels: [patent-free-science]
+title: "[Patent-Free Science] "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this template to share resources, news, or arguments advancing patent-free and open science.
+        See [FORUM.md — Patent-Free Science](https://github.com/BrewtaniusAI/immortal-bot/blob/main/FORUM.md#patent-free-science-advocacy) for context.
+  - type: dropdown
+    id: content_type
+    attributes:
+      label: Content type
+      options:
+        - "Paper / preprint"
+        - "Dataset"
+        - "Policy development"
+        - "Defensive publication"
+        - "News / commentary"
+        - "Tool or resource"
+        - "Other"
+    validations:
+      required: true
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: Briefly describe the resource or news item.
+      placeholder: What is it and why is it relevant to patent-free science?
+    validations:
+      required: true
+  - type: input
+    id: link
+    attributes:
+      label: Link / DOI
+      description: Provide a URL, DOI, or other persistent identifier if available.
+      placeholder: "https://doi.org/..."
+  - type: textarea
+    id: discussion
+    attributes:
+      label: Discussion points
+      description: What aspects would you like the community to discuss or act on?
+      placeholder: Optional — leave blank if you just want to share the resource.

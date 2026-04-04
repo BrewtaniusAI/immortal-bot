@@ -11,6 +11,7 @@ This project adheres to principles inspired by 'A Framework for Patent-Free Scie
 ## Project docs
 - Onboarding: `ONBOARDING.md`
 - Governance: `GOVERNANCE.md`
+- Community forum & Founders Group: `FORUM.md`
 - Contributing: `CONTRIBUTING.md`
 - Citation metadata: `CITATION.cff`
 

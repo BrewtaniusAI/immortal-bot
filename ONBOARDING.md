@@ -118,3 +118,15 @@ Open an issue and include:
 - Node + npm versions
 - OpenClaw version
 - Output of `bash ./qc_validate.sh`
+
+## Community forum & Founders Group
+
+Once you have read the docs and run QC, join the community conversation:
+
+- **GitHub Discussions** (enable via repository Settings → Features → Discussions):
+  - 📣 [Governance](https://github.com/BrewtaniusAI/immortal-bot/discussions/new?category=governance) — lazy-consensus proposals before they become Issues
+  - 🧑‍🤝‍🧑 [Founders Group](https://github.com/BrewtaniusAI/immortal-bot/discussions/new?category=founders-group) — introduce yourself and coordinate with fellow founders
+  - 🔬 [Patent-Free Science](https://github.com/BrewtaniusAI/immortal-bot/discussions/new?category=patent-free-science) — share resources and advocacy links
+  - 🌍 [Global Reach](https://github.com/BrewtaniusAI/immortal-bot/discussions/new?category=global-reach) — surface participation barriers and translation needs
+
+See [`FORUM.md`](FORUM.md) for full details on the Founding Cohort and all discussion categories.
